@@ -308,14 +308,14 @@ void ICON_Leveling(bool show) {
     if (HMI_IsChinese())
       DWIN_Frame_AreaCopy(1, 211, 447, 238, 460, 186, 318);
     else
-      DWIN_Frame_AreaCopy(1, 84, 437, 120,  449, 182, 318);
+      DWIN_Frame_AreaCopy(1, 84, 465, 120, 478, 182, 318);
   }
   else {
     DWIN_ICON_Show(ICON, ICON_Leveling_0, 145, 246);
     if (HMI_IsChinese())
       DWIN_Frame_AreaCopy(1, 211, 405, 238, 420, 186, 318);
     else
-      DWIN_Frame_AreaCopy(1, 84, 465, 120, 478, 182, 318);
+      DWIN_Frame_AreaCopy(1, 84, 437, 120, 449, 182, 318);
   }
 }
 
@@ -470,8 +470,19 @@ void Draw_Menu_Item(const uint8_t line, const uint8_t icon=0, const char * const
   if (more) Draw_More_Icon(line);
 }
 
+void Draw_Menu_Item(const uint8_t line, uint8_t xStart, uint8 yStart, uint8_t xEnd, uint8 yEnd, const uint8_t icon=0, bool more=false) {
+  DWIN_Frame_AreaCopy(1, xStart, yStart, xEnd, yEnd, LBLX, MBASE(line) - 1);
+  if (icon) Draw_Menu_Icon(line, icon);
+  if (more) Draw_More_Icon(line);
+}
+
 void Draw_Menu_Line(const uint8_t line, const uint8_t icon=0, const char * const label=nullptr, bool more=false) {
   Draw_Menu_Item(line, icon, label, more);
+  DWIN_Draw_Line(Line_Color, 16, MBASE(line) + 33, 256, MBASE(line) + 34);
+}
+
+void Draw_Menu_Line(const uint8_t line, uint8_t xStart, uint8 yStart, uint8_t xEnd, uint8 yEnd, const uint8_t icon=0, bool more=false) {
+  Draw_Menu_Item(line, xStart, yStart, xEnd, yEnd, icon, more);
   DWIN_Draw_Line(Line_Color, 16, MBASE(line) + 33, 256, MBASE(line) + 34);
 }
 
@@ -926,29 +937,29 @@ void Draw_Tune_Menu() {
 }
 
 void draw_max_en(const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 245, 119, 269, 129, LBLX, line);   // "Max"
+  DWIN_Frame_AreaCopy(1, 245, 119, 271, 129, LBLX, line);   // "Max"
 }
 void draw_max_accel_en(const uint16_t line) {
   draw_max_en(line);
-  DWIN_Frame_AreaCopy(1, 1, 135, 79, 145, LBLX + 27, line); // "Acceleration"
+  DWIN_Frame_AreaCopy(1, 1, 135, 79, 145, LBLX + 30, line); // "Acceleration"
 }
 void draw_speed_en(const uint16_t inset, const uint16_t line) {
   DWIN_Frame_AreaCopy(1, 184, 119, 224, 132, LBLX + inset, line); // "Speed"
 }
 void draw_jerk_en(const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 64, 119, 106, 129, LBLX + 27, line); // "Jerk"
+  DWIN_Frame_AreaCopy(1, 64, 119, 106, 129, LBLX + 30, line); // "Jerk"
 }
 void draw_steps_per_mm(const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 1, 151, 101, 161, LBLX, line);   // "Steps-per-mm"
+  DWIN_Frame_AreaCopy(1, 1, 151, 90, 163, LBLX, line);   // "Steps-per-mm"
 }
 void say_x(const uint16_t inset, const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 95, 104, 102, 114, LBLX + inset, line); // "X"
+  DWIN_Frame_AreaCopy(1, 94, 104, 102, 114, LBLX + inset, line); // "X"
 }
 void say_y(const uint16_t inset, const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 104, 104, 110, 114, LBLX + inset, line); // "Y"
+  DWIN_Frame_AreaCopy(1, 103, 104, 110, 114, LBLX + inset, line); // "Y"
 }
 void say_z(const uint16_t inset, const uint16_t line) {
-  DWIN_Frame_AreaCopy(1, 112, 104, 120, 114, LBLX + inset, line); // "Z"
+  DWIN_Frame_AreaCopy(1, 113, 104, 120, 114, LBLX + inset, line); // "Z"
 }
 void say_e(const uint16_t inset, const uint16_t line) {
   DWIN_Frame_AreaCopy(1, 237, 119, 244, 129, LBLX + inset, line); // "E"
@@ -961,10 +972,10 @@ void Draw_Motion_Menu() {
     DWIN_Frame_TitleCopy(1, 1, 16, 28, 28);                                     // "Motion"
     DWIN_Frame_AreaCopy(1, 173, 133, 228, 147, LBLX, MBASE(MOTION_CASE_RATE));  // Max speed
     DWIN_Frame_AreaCopy(1, 173, 133, 200, 147, LBLX, MBASE(MOTION_CASE_ACCEL));        // Max...
-    DWIN_Frame_AreaCopy(1, 28, 149, 69, 161, LBLX + 27, MBASE(MOTION_CASE_ACCEL) + 1); // ...Acceleration
+    DWIN_Frame_AreaCopy(1, 28, 149, 69, 161, LBLX + 30, MBASE(MOTION_CASE_ACCEL) + 1); // ...Acceleration
     #if HAS_CLASSIC_JERK
       DWIN_Frame_AreaCopy(1, 173, 133, 200, 147, LBLX, MBASE(MOTION_CASE_JERK));        // Max...
-      DWIN_Frame_AreaCopy(1, 1, 180, 28, 192, LBLX + 27, MBASE(MOTION_CASE_JERK) + 1);  // ...
+      DWIN_Frame_AreaCopy(1, 1, 180, 28, 192, LBLX + 30, MBASE(MOTION_CASE_JERK) + 1);  // ...
       DWIN_Frame_AreaCopy(1, 202, 133, 228, 147, LBLX + 54, MBASE(MOTION_CASE_JERK));   // ...Jerk
     #endif
     DWIN_Frame_AreaCopy(1, 153, 148, 194, 161, LBLX, MBASE(MOTION_CASE_STEPS));         // Flow ratio
@@ -983,7 +994,7 @@ void Draw_Motion_Menu() {
       #endif
       DWIN_Draw_Label(MBASE(MOTION_CASE_STEPS), GET_TEXT_F(MSG_STEPS_PER_MM));
     #else
-      draw_max_en(MBASE(MOTION_CASE_RATE)); draw_speed_en(27, MBASE(MOTION_CASE_RATE)); // "Max Speed"
+      draw_max_en(MBASE(MOTION_CASE_RATE)); draw_speed_en(30, MBASE(MOTION_CASE_RATE)); // "Max Speed"
       draw_max_accel_en(MBASE(MOTION_CASE_ACCEL));                                      // "Max Acceleration"
       #if HAS_CLASSIC_JERK
         draw_max_en(MBASE(MOTION_CASE_JERK)); draw_jerk_en(MBASE(MOTION_CASE_JERK));    // "Max Jerk"
@@ -2591,12 +2602,12 @@ void Draw_Temperature_Menu() {
       #endif
     #else
       #if HAS_HOTEND
-        DWIN_Frame_AreaCopy(1, 197, 104, 238, 114, LBLX, MBASE(TEMP_CASE_TEMP));      // Nozzle...
-        DWIN_Frame_AreaCopy(1, 1, 89, 83, 101, LBLX + 44, MBASE(TEMP_CASE_TEMP));     // ...Temperature
+        DWIN_Frame_AreaCopy(1, 197, 104, 239, 114, LBLX, MBASE(TEMP_CASE_TEMP));      // Nozzle...
+        DWIN_Frame_AreaCopy(1, 1, 89, 83, 101, LBLX + 47, MBASE(TEMP_CASE_TEMP));     // ...Temperature
       #endif
       #if HAS_HEATED_BED
         DWIN_Frame_AreaCopy(1, 240, 104, 264, 114, LBLX, MBASE(TEMP_CASE_BED));       // Bed...
-        DWIN_Frame_AreaCopy(1, 1, 89, 83, 101, LBLX + 27, MBASE(TEMP_CASE_BED));      // ...Temperature
+        DWIN_Frame_AreaCopy(1, 1, 89, 83, 101, LBLX + 30, MBASE(TEMP_CASE_BED));      // ...Temperature
       #endif
       #if HAS_FAN
         DWIN_Frame_AreaCopy(1, 0, 119, 64, 132, LBLX, MBASE(TEMP_CASE_FAN));          // Fan speed
@@ -2680,10 +2691,18 @@ void HMI_Control() {
           Draw_Back_First();
             break;
           case MROWS + 1: // Temperature >
-            Draw_Menu_Line(0, ICON_Temperature, GET_TEXT(MSG_TEMPERATURE), true);
+            #ifdef USE_STRING_TITLES
+              Draw_Menu_Line(0, ICON_Temperature, GET_TEXT(MSG_TEMPERATURE), true);
+            #else
+              Draw_Menu_Line(0, 1, 89,  83, 101, ICON_Temperature, true);
+            #endif
             break;
           case MROWS + 2: // Move >
-            Draw_Menu_Line(0, ICON_Motion, GET_TEXT(MSG_MOTION), true);
+            #ifdef USE_STRING_TITLES
+              Draw_Menu_Line(0, ICON_Motion, GET_TEXT(MSG_MOTION), true);
+            #else
+              Draw_Menu_Line(0, 84, 89, 128, 99, ICON_Motion, true);
+            #endif
           default: break;
         }
       }
@@ -3072,20 +3091,20 @@ void Draw_Max_Speed_Menu() {
       #endif
     #else
       draw_max_en(MBASE(1));          // "Max"
-      DWIN_Frame_AreaCopy(1, 184, 119, 234, 132, LBLX + 27, MBASE(1)); // "Speed X"
+      DWIN_Frame_AreaCopy(1, 184, 119, 234, 132, LBLX + 30, MBASE(1)); // "Speed X"
 
       draw_max_en(MBASE(2));          // "Max"
-      draw_speed_en(27, MBASE(2));    // "Speed"
-      say_y(70, MBASE(2));            // "Y"
+      draw_speed_en(30, MBASE(2));    // "Speed"
+      say_y(73, MBASE(2));            // "Y"
 
       draw_max_en(MBASE(3));          // "Max"
-      draw_speed_en(27, MBASE(3));    // "Speed"
-      say_z(70, MBASE(3));            // "Z"
+      draw_speed_en(30, MBASE(3));    // "Speed"
+      say_z(73, MBASE(3));            // "Z"
 
       #if HAS_HOTEND
         draw_max_en(MBASE(4));        // "Max"
-        draw_speed_en(27, MBASE(4));  // "Speed"
-        say_e(70, MBASE(4));          // "E"
+        draw_speed_en(30, MBASE(4));  // "Speed"
+        say_e(73, MBASE(4));          // "E"
       #endif
     #endif
   }
@@ -3135,11 +3154,11 @@ void Draw_Max_Accel_Menu() {
         DWIN_Draw_Label(MBASE(4), F("Max Accel E"));
       #endif
     #else
-      draw_max_accel_en(MBASE(1)); say_x(108, MBASE(1));  // "Max Acceleration X"
-      draw_max_accel_en(MBASE(2)); say_y(108, MBASE(2));  // "Max Acceleration Y"
-      draw_max_accel_en(MBASE(3)); say_z(108, MBASE(3));  // "Max Acceleration Z"
+      draw_max_accel_en(MBASE(1)); say_x(110, MBASE(1));  // "Max Acceleration X"
+      draw_max_accel_en(MBASE(2)); say_y(110, MBASE(2));  // "Max Acceleration Y"
+      draw_max_accel_en(MBASE(3)); say_z(110, MBASE(3));  // "Max Acceleration Z"
       #if HAS_HOTEND
-        draw_max_accel_en(MBASE(4)); say_e(108, MBASE(4)); // "Max Acceleration E"
+        draw_max_accel_en(MBASE(4)); say_e(110, MBASE(4)); // "Max Acceleration E"
       #endif
     #endif
   }
@@ -3197,23 +3216,23 @@ void Draw_Max_Accel_Menu() {
         draw_max_en(MBASE(1));          // "Max"
         draw_jerk_en(MBASE(1));         // "Jerk"
         draw_speed_en(72, MBASE(1));    // "Speed"
-        say_x(115, MBASE(1));           // "X"
+        say_x(117, MBASE(1));           // "X"
 
         draw_max_en(MBASE(2));          // "Max"
         draw_jerk_en(MBASE(2));         // "Jerk"
         draw_speed_en(72, MBASE(2));    // "Speed"
-        say_y(115, MBASE(2));           // "Y"
+        say_y(117, MBASE(2));           // "Y"
 
         draw_max_en(MBASE(3));          // "Max"
         draw_jerk_en(MBASE(3));         // "Jerk"
         draw_speed_en(72, MBASE(3));    // "Speed"
-        say_z(115, MBASE(3));           // "Z"
+        say_z(117, MBASE(3));           // "Z"
 
         #if HAS_HOTEND
           draw_max_en(MBASE(4));        // "Max"
           draw_jerk_en(MBASE(4));       // "Jerk"
           draw_speed_en(72, MBASE(4));  // "Speed"
-          say_e(115, MBASE(4));         // "E"
+          say_e(117, MBASE(4));         // "E"
         #endif
       #endif
     }
