@@ -271,6 +271,7 @@ void Draw_Steps_Menu();
 
 // Popup windows
 
+void DWIN_Draw_Popup(const uint8_t icon, const char * const cmsg1, const char * const cmsg2, uint8_t button=0);
 void DWIN_Draw_Popup(const uint8_t icon, const char * const cmsg1, FSTR_P const fmsg2, uint8_t button=0);
 void DWIN_Draw_Popup(const uint8_t icon, FSTR_P const fmsg1=nullptr, FSTR_P const fmsg2=nullptr, uint8_t button=0);
 

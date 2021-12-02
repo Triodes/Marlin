@@ -495,6 +495,16 @@ void DWIN_Draw_Popup2(FSTR_P const fmsg2, uint8_t button) {
   if (fmsg2) DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 240, fmsg2);
   if (button) DWINUI::Draw_Icon(button, 86, 280);
 }
+void DWIN_Draw_Popup2(const char * const cmsg2, uint8_t button) {
+  if (cmsg2) DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 240, cmsg2);
+  if (button) DWINUI::Draw_Icon(button, 86, 280);
+}
+
+void DWIN_Draw_Popup(const uint8_t icon, const char * const cmsg1, const char * const cmsg2, uint8_t button) {
+  DWIN_Draw_Popup1(icon);
+  if (cmsg1) DWINUI::Draw_CenteredString(HMI_data.PopupTxt_Color, 210, cmsg1);
+  DWIN_Draw_Popup2(cmsg2, button);
+}
 
 void DWIN_Draw_Popup(const uint8_t icon, const char * const cmsg1, FSTR_P const fmsg2, uint8_t button) {
   DWIN_Draw_Popup1(icon);
