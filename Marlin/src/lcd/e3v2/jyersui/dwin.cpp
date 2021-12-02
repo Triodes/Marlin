@@ -922,8 +922,11 @@ void CrealityDWINClass::Draw_Status_Area(bool icons/*=false*/) {
   }
   DWIN_UpdateLCD();
 }
-
 void CrealityDWINClass::Draw_Popup(FSTR_P const line1, FSTR_P const line2, FSTR_P const line3, uint8_t mode, uint8_t icon/*=0*/) {
+  CrealityDWINClass::Draw_Popup(line1, FTOP(line2), line3, mode, icon);
+}
+
+void CrealityDWINClass::Draw_Popup(FSTR_P const line1, const char * const line2, FSTR_P const line3, uint8_t mode, uint8_t icon/*=0*/) {
   if (process != Confirm && process != Popup && process != Wait) last_process = process;
   if ((process == Menu || process == Wait) && mode == Popup) last_selection = selection;
   process = mode;
@@ -933,7 +936,7 @@ void CrealityDWINClass::Draw_Popup(FSTR_P const line1, FSTR_P const line2, FSTR_
   const uint8_t ypos = (mode == Popup || mode == Confirm) ? 150 : 230;
   if (icon > 0) DWIN_ICON_Show(ICON, icon, 101, 105);
   DWIN_Draw_String(true, DWIN_FONT_MENU, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen_P(FTOP(line1))) / 2, ypos, line1);
-  DWIN_Draw_String(true, DWIN_FONT_MENU, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen_P(FTOP(line2))) / 2, ypos + 30, line2);
+  DWIN_Draw_String(true, DWIN_FONT_MENU, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen_P(line2)) / 2, ypos + 30, line2);
   DWIN_Draw_String(true, DWIN_FONT_MENU, Popup_Text_Color, Color_Bg_Window, (272 - 8 * strlen_P(FTOP(line3))) / 2, ypos + 60, line3);
   if (mode == Popup) {
     selection = 0;
