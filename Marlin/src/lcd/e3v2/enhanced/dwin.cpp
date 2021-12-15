@@ -183,6 +183,7 @@ static uint32_t _remain_time = 0;
 
 // Additional Aux Host Support
 static bool sdprint = false;
+static String _header_text = "";
 
 #if ENABLED(PAUSE_HEAT)
   #if HAS_HOTEND
@@ -668,7 +669,7 @@ void Draw_PrintProcess() {
   ICON_ResumeOrPause();
   ICON_Stop();
 
-  DWIN_Print_Header(sdprint ? card.longest_filename() : nullptr);
+  DWIN_Print_Header(sdprint ? card.longest_filename() : _header_text.c_str());
 
   DWINUI::Draw_Icon(ICON_PrintTime, 15, 173);
   DWINUI::Draw_Icon(ICON_RemainTime, 150, 171);
@@ -1290,7 +1291,7 @@ void HMI_SelectFile() {
         //  thermalManager.fan_speed[i] = 255;
       #endif
 
-      DWIN_Print_Started(true);
+      DWIN_Print_Started(true, nullptr);
     }
   }
 
@@ -1326,22 +1327,28 @@ void HMI_Printing() {
       case PRINT_SETUP: Draw_Tune_Menu(); break;
       case PRINT_PAUSE_RESUME:
         if (HMI_flag.pause_flag) {
-          ICON_Pause();
-          #if DISABLED(ADVANCED_PAUSE_FEATURE)
-            char cmd[40];
-            cmd[0] = '\0';
-            #if BOTH(HAS_HEATED_BED, PAUSE_HEAT)
-              if (resume_bed_temp) sprintf_P(cmd, PSTR("M190 S%i\n"), resume_bed_temp);
+          if (sdprint) {
+            ICON_Pause();
+            #if DISABLED(ADVANCED_PAUSE_FEATURE)
+              char cmd[40];
+              cmd[0] = '\0';
+              #if BOTH(HAS_HEATED_BED, PAUSE_HEAT)
+                if (resume_bed_temp) sprintf_P(cmd, PSTR("M190 S%i\n"), resume_bed_temp);
+              #endif
+              #if BOTH(HAS_HOTEND, PAUSE_HEAT)
+                if (resume_hotend_temp) sprintf_P(&cmd[strlen(cmd)], PSTR("M109 S%i\n"), resume_hotend_temp);
+              #endif
+              #if HAS_FAN
+                if (resume_fan) thermalManager.fan_speed[0] = resume_fan;
+              #endif
+              strcat_P(cmd, M24_STR);
+              queue.inject(cmd);
             #endif
-            #if BOTH(HAS_HOTEND, PAUSE_HEAT)
-              if (resume_hotend_temp) sprintf_P(&cmd[strlen(cmd)], PSTR("M109 S%i\n"), resume_hotend_temp);
+          } else {
+            #if ENABLED(HOST_ACTION_COMMANDS)
+              host_action_resume();
             #endif
-            #if HAS_FAN
-              if (resume_fan) thermalManager.fan_speed[0] = resume_fan;
-            #endif
-            strcat_P(cmd, M24_STR);
-            queue.inject(cmd);
-          #endif
+          }
         }
         else {
           HMI_flag.select_flag = true;
@@ -1384,9 +1391,15 @@ void HMI_PauseOrStop() {
   else if (encoder_diffState == ENCODER_DIFF_ENTER) {
     if (select_print.now == PRINT_PAUSE_RESUME) {
       if (HMI_flag.select_flag) {
-        HMI_flag.pause_action = true;
-        ICON_Resume();
-        queue.inject_P(PSTR("M25"));
+        if (sdprint) {
+          HMI_flag.pause_action = true;
+          ICON_Resume();
+          queue.inject_P(PSTR("M25"));
+        } else {
+          #if ENABLED(HOST_ACTION_COMMANDS)
+            host_action_pause();
+          #endif
+        }
       }
       else {
         // cancel pause
@@ -1395,15 +1408,22 @@ void HMI_PauseOrStop() {
     }
     else if (select_print.now == PRINT_STOP) {
       if (HMI_flag.select_flag) {
-        checkkey = MainMenu;
-        if (HMI_flag.home_flag) planner.synchronize(); // Wait for planner moves to finish!
-        wait_for_heatup = wait_for_user = false;       // Stop waiting for heating/user
-        card.abortFilePrintSoon();                     // Let the main loop handle SD abort
-        dwin_abort_flag = true;                        // Reset feedrate, return to Home
-        #ifdef ACTION_ON_CANCEL
-          host_action_cancel();
-        #endif
-        DWIN_Draw_Popup(ICON_BLTouch, F("Stopping...") , F("Please wait until done."));
+        if (sdprint) {
+          checkkey = MainMenu;
+          if (HMI_flag.home_flag) planner.synchronize(); // Wait for planner moves to finish!
+          wait_for_heatup = wait_for_user = false;       // Stop waiting for heating/user
+          card.abortFilePrintSoon();                     // Let the main loop handle SD abort
+          dwin_abort_flag = true;                        // Reset feedrate, return to Home
+          #ifdef ACTION_ON_CANCEL
+            host_action_cancel();
+          #endif
+          DWIN_Draw_Popup(ICON_BLTouch, F("Stopping...") , F("Please wait until done."));
+        } else {
+          #if ENABLED(HOST_ACTION_COMMANDS)
+            host_action_cancel();
+          #endif
+          Goto_PrintProcess();
+        }
       }
       else
         Goto_PrintProcess(); // cancel stop
@@ -1786,10 +1806,13 @@ void DWIN_StatusChanged_P(PGM_P const pstr) {
 }
 
 // Started a Print Job
-void DWIN_Print_Started(const bool sd) {
+void DWIN_Print_Started(const bool sd, const char *header) {
   sdprint = card.isPrinting() || sd;
-  _percent_done = 0;
-  _remain_time = 0;
+  if (!HMI_flag.pause_flag) {
+    _percent_done = 0;
+    _remain_time = 0;
+    _header_text = header;
+  }
   HMI_flag.print_finish = false;
   Goto_PrintProcess();
 }
