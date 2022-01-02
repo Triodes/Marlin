@@ -3140,13 +3140,10 @@ void Draw_Prepare_Menu() {
     SetMenuTitle({133, 1, 28, 13}, {179, 0, 48, 14}, GET_TEXT_F(MSG_PREPARE));
     DWINUI::MenuItemsPrepare(13);
     ADDMENUITEM(ICON_Back, GET_TEXT_F(MSG_BUTTON_BACK), onDrawBack, Goto_Main_Menu);
-    #if ENABLED(ADVANCED_PAUSE_FEATURE)
-      ADDMENUITEM(ICON_FilMan, GET_TEXT_F(MSG_FILAMENT_MAN), onDrawSubMenu, Draw_FilamentMan_Menu);
-    #endif
     ADDMENUITEM(ICON_Axis, GET_TEXT_F(MSG_MOVE_AXIS), onDrawMoveSubMenu, Draw_Move_Menu);
-    ADDMENUITEM(ICON_LevBed, GET_TEXT_F(MSG_BED_LEVELING), onDrawSubMenu, Draw_LevBedCorners_Menu);
-    ADDMENUITEM(ICON_CloseMotor, GET_TEXT_F(MSG_DISABLE_STEPPERS), onDrawDisableMotors, DisableMotors);
     ADDMENUITEM(ICON_Homing, GET_TEXT_F(MSG_AUTO_HOME), onDrawAutoHome, AutoHome);
+    ADDMENUITEM(ICON_CloseMotor, GET_TEXT_F(MSG_DISABLE_STEPPERS), onDrawDisableMotors, DisableMotors);
+    // ADDMENUITEM(ICON_LevBed, GET_TEXT_F(MSG_BED_LEVELING), onDrawSubMenu, Draw_LevBedCorners_Menu);
     #if ENABLED(MESH_BED_LEVELING)
       ADDMENUITEM(ICON_ManualMesh, GET_TEXT_F(MSG_MANUAL_MESH), onDrawSubMenu, Draw_ManualMesh_Menu);
     #endif
@@ -3156,6 +3153,9 @@ void Draw_Prepare_Menu() {
       #else
         ADDMENUITEM(ICON_SetHome, GET_TEXT_F(MSG_SET_HOME_OFFSETS), onDrawHomeOffset, SetHome);
       #endif
+    #endif
+    #if ENABLED(ADVANCED_PAUSE_FEATURE)
+      ADDMENUITEM(ICON_FilMan, GET_TEXT_F(MSG_FILAMENT_MAN), onDrawSubMenu, Draw_FilamentMan_Menu);
     #endif
     #if HAS_HOTEND
       ADDMENUITEM(ICON_PLAPreheat, GET_TEXT_F(MSG_PREHEAT_1), onDrawPreheat1, SetPreheat0);
@@ -3267,7 +3267,7 @@ void Draw_Move_Menu() {
     #endif
   }
   CurrentMenu->draw();
-  if (!all_axes_trusted()) ui.set_status_P(PSTR("WARNING: position is unknow"));
+  if (!all_axes_trusted()) ui.set_status_P(PSTR("WARNING: position is unknown!"));
 }
 
 #if HAS_HOME_OFFSET
@@ -3681,7 +3681,7 @@ void Draw_Steps_Menu() {
       ADDMENUITEM_P(ICON_Zoffset, GET_TEXT_F(MSG_ZPROBE_ZOFFSET), onDrawPFloat2Menu, SetZOffset, &BABY_Z_VAR);
     }
     CurrentMenu->draw();
-    if (!axis_is_trusted(Z_AXIS)) ui.set_status_P(PSTR("WARNING: Z position is unknow, move Z to home"));
+    if (!axis_is_trusted(Z_AXIS)) ui.set_status_P(PSTR("WARNING: Z position unknown!"));
   }
 #endif
 
