@@ -234,6 +234,7 @@ public:
   static void Modify_Option(uint8_t value, const char * const * options, uint8_t max);
 
   static void Update_Status(const char * const text);
+  static void Set_Filename(const char *text);
   static void Start_Print(bool sd);
   static void Stop_Print();
   static void Update();

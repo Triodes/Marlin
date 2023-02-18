@@ -759,7 +759,7 @@ void CrealityDWINClass::Draw_Print_Filename(const bool reset/*=false*/) {
 }
 
 void CrealityDWINClass::Draw_Print_ProgressBar() {
-  uint8_t printpercent = sdprint ? card.percentDone() : (ui._get_progress() / 100);
+  uint8_t printpercent = sdprint ? card.percentDone() : ui._get_progress();
   DWIN_ICON_Show(ICON, ICON_Bar, 15, 93);
   DWIN_Draw_Rectangle(1, BarFill_Color, 16 + printpercent * 240 / 100, 93, 256, 113);
   DWIN_Draw_IntValue(true, true, 0, DWIN_FONT_MENU, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, 3, 109, 133, printpercent);
@@ -4655,6 +4655,10 @@ void CrealityDWINClass::Update_Status(const char * const text) {
   }
 }
 
+void CrealityDWINClass::Set_Filename(const char *text = nullptr) {
+  strncpy(filename, text, LONG_FILENAME_LENGTH);
+}
+
 void CrealityDWINClass::Start_Print(bool sd) {
   sdprint = sd;
   if (!printing) {
@@ -4670,8 +4674,6 @@ void CrealityDWINClass::Start_Print(bool sd) {
       #endif
       strcpy(filename, card.longest_filename());
     }
-    else
-      strcpy_P(filename, PSTR("Host Print"));
     TERN_(SET_PROGRESS_PERCENT, ui.set_progress(0));
     TERN_(SET_REMAINING_TIME, ui.set_remaining_time(0));
     Draw_Print_Screen();
