@@ -759,7 +759,7 @@ void CrealityDWINClass::Draw_Print_Filename(const bool reset/*=false*/) {
 }
 
 void CrealityDWINClass::Draw_Print_ProgressBar() {
-  uint8_t printpercent = sdprint ? card.percentDone() : (ui._get_progress() / 100);
+  uint8_t printpercent = sdprint ? card.percentDone() : ui._get_progress();
   DWIN_ICON_Show(ICON, ICON_Bar, 15, 93);
   DWIN_Draw_Rectangle(1, BarFill_Color, 16 + printpercent * 240 / 100, 93, 256, 113);
   DWIN_Draw_IntValue(true, true, 0, DWIN_FONT_MENU, GetColor(eeprom_settings.progress_percent, Percent_Color), Color_Bg_Black, 3, 109, 133, printpercent);
@@ -1135,7 +1135,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case PREPARE_HOME:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Homing"), nullptr, true);
+            Draw_Menu_Item(row, ICON_Homing, F("Homing"), nullptr, true);
           else
             Draw_Menu(HomeMenu);
           break;
@@ -1288,7 +1288,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case HOME_SET:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Set Home Position"));
+            Draw_Menu_Item(row, ICON_Homing, F("Set Home Position"));
           else {
             gcode.process_subcommands_now(F("G92X0Y0Z0"));
             AudioFeedback();
@@ -2267,7 +2267,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case MOTION_HOMEOFFSETS:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Home Offsets"), nullptr, true);
+            Draw_Menu_Item(row, ICON_Homing, F("Home Offsets"), nullptr, true);
           else
             Draw_Menu(HomeOffsets);
           break;
@@ -4656,6 +4656,10 @@ void CrealityDWINClass::Update_Status(const char * const text) {
     for (uint8_t i = 0; i < _MIN((size_t)64, strlen(text)); ++i) statusmsg[i] = text[i];
     statusmsg[_MIN((size_t)64, strlen(text))] = '\0';
   }
+}
+
+void CrealityDWINClass::Set_Filename(const char *text = nullptr) {
+  strncpy(filename, text, LONG_FILENAME_LENGTH);
 }
 
 void CrealityDWINClass::Start_Print(const bool sd) {
