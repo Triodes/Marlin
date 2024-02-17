@@ -1133,7 +1133,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case PREPARE_HOME:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Homing"), nullptr, true);
+            Draw_Menu_Item(row, ICON_Homing, F("Homing"), nullptr, true);
           else
             Draw_Menu(HomeMenu);
           break;
@@ -1286,7 +1286,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case HOME_SET:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Set Home Position"));
+            Draw_Menu_Item(row, ICON_Homing, F("Set Home Position"));
           else {
             gcode.process_subcommands_now(F("G92X0Y0Z0"));
             AudioFeedback();
@@ -2265,7 +2265,7 @@ void CrealityDWINClass::Menu_Item_Handler(const uint8_t menu, const uint8_t item
           break;
         case MOTION_HOMEOFFSETS:
           if (draw)
-            Draw_Menu_Item(row, ICON_SetHome, F("Home Offsets"), nullptr, true);
+            Draw_Menu_Item(row, ICON_Homing, F("Home Offsets"), nullptr, true);
           else
             Draw_Menu(HomeOffsets);
           break;
