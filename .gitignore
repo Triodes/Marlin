@@ -92,6 +92,7 @@ applet/
 *.i*86
 *.x86_64
 *.hex
+*.ps1
 
 # Debug files
 *.dSYM/
